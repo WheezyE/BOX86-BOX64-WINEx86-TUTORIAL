@@ -16,7 +16,7 @@ if ! ping -c 1 google.com &> /dev/null; then
 fi
 
 # Check if the distro is Debian or Ubuntu
-if [ "$DISTRO" != "Debian" ] && [ "$DISTRO" != "Ubuntu" ]; then
+if [ "$DISTRO" != "Debian" ] && [ "$DISTRO" != "Raspbian" ] && [ "$DISTRO" != "Ubuntu" ]; then
     echo -e "${RED}This script only supports Debian and Ubuntu.${NC}"
     exit 1
 fi
@@ -40,8 +40,8 @@ echo "Checking for Panfrost driver..."
 sudo apt install -qq -y mesa-utils neofetch
 glxinfo -B | awk '/Device:/ { if (tolower($0) ~ /panfrost/) exit 0; else exit 1; }'
 if [ $? -ne 0 ]; then
-    echo -e "${RED}Panfrost driver not detected. Exiting...${NC}"
-    exit 1
+    echo -e "${RED}Panfrost driver not detected. Continuing without it...${NC}"
+    #exit 1
 fi
 
 echo -e "${RED}This script is a WIP for installing Box86/Box64/Winex86 on ARM Linux Debian/Ubuntu platforms that aren't RPI. It could destroy your system, beware; multiarch isn't a toy.${NC}"
@@ -271,7 +271,7 @@ if [ "$PLATFORM" != "rockchip-rk3588" ]; then
         case $upgrade_mesa in
             Yes)
                 echo "Upgrading Mesa drivers for Panfrost..."
-                if [ "$DISTRO" == "Ubuntu" ] || [ "$DISTRO" == "Debian" ]; then
+                if [ "$DISTRO" == "Ubuntu" ] || ["$DISTRO" == "Raspbian"] || [ "$DISTRO" == "Debian" ]; then
                     sudo add-apt-repository --yes ppa:oibaf/graphics-drivers
                     sudo apt -qq update
                     sudo apt -qq install mesa-va-drivers:armhf mesa-va-drivers libd3dadapter9-mesa:armhf -y
@@ -312,7 +312,3 @@ select reboot_choice in "Yes" "No"; do
             ;;
     esac
 done
-
-
-
-
